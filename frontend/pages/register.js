@@ -150,7 +150,7 @@ export default function RegisterPage() {
         </main>
 
         <footer className="footer">
-          <p>© 2024 Luxury Real Estate Blog </p>
+          <p>©  Luxury Real Estate Blog </p>
         </footer>
       </div>
     </>

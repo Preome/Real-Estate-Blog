@@ -157,7 +157,7 @@ export default function CreatePostPage() {
         </main>
 
         <footer className="footer">
-          <p>© 2024 Luxury Real Estate Blogs</p>
+          <p>©  Luxury Real Estate Blogs</p>
         </footer>
       </div>
     </>

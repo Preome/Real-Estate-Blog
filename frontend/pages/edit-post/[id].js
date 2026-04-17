@@ -273,7 +273,7 @@ export default function EditPostPage() {
         </main>
 
         <footer className="footer">
-          <p>© 2024 Luxury Real Estate Blog </p>
+          <p>©  Luxury Real Estate Blog </p>
         </footer>
       </div>
     </>
