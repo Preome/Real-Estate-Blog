@@ -7,7 +7,7 @@ const { uploadToCloudinary } = require('../middleware/upload');
 // @access  Private
 exports.createPost = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, category } = req.body;
     
     // Validate required fields
     if (!title || !description) {
@@ -38,6 +38,7 @@ exports.createPost = async (req, res) => {
     const post = await Post.create({
       title,
       description,
+      category: category || 'For Buyers',
       imageUrl,
       imagePublicId,
       author: req.user.id,
@@ -128,7 +129,7 @@ exports.getSinglePost = async (req, res) => {
 // @access  Private
 exports.updatePost = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, category } = req.body;
     let post = await Post.findById(req.params.id);
     
     if (!post) {
@@ -149,6 +150,7 @@ exports.updatePost = async (req, res) => {
     // Update fields
     if (title) post.title = title;
     if (description) post.description = description;
+    if (category) post.category = category;
     
     // Upload new image if provided
     if (req.file) {
@@ -369,6 +371,23 @@ function getIconForTerm(term) {
   return '🔍';
 }
 
+// Helper function for category icons
+function getCategoryIcon(category) {
+  const icons = {
+    'For Buyers': '🏠',
+    'For Sellers': '💰',
+    'Infographics': '📊',
+    'Home Prices': '💵',
+    'Mortgage Rates': '🏦',
+    'Inventory': '📦',
+    'Market Trends': '📈',
+    'Investment Tips': '💎',
+    'Luxury Homes': '🏰',
+    'First Time Buyers': '🌟'
+  };
+  return icons[category] || '📄';
+}
+
 // @desc    Get popular search terms (REAL - based on actual searches)
 // @route   GET /api/posts/popular-searches
 // @access  Public
@@ -460,6 +479,84 @@ exports.getPopularSearches = async (req, res) => {
         { term: "Investment", query: "investment", icon: "💰", count: 0 }
       ],
       source: 'error-fallback'
+    });
+  }
+};
+
+// @desc    Get posts by category
+// @route   GET /api/posts/category/:category
+// @access  Public
+exports.getPostsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
+    const skip = (page - 1) * limit;
+    
+    const posts = await Post.find({ category: decodeURIComponent(category) })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('author', 'name email');
+    
+    const total = await Post.countDocuments({ category: decodeURIComponent(category) });
+    
+    res.status(200).json({
+      success: true,
+      data: posts,
+      category: category,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get posts by category error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to fetch posts by category',
+      details: error.message 
+    });
+  }
+};
+
+// @desc    Get all categories with post counts
+// @route   GET /api/posts/categories/stats
+// @access  Public
+exports.getCategoryStats = async (req, res) => {
+  try {
+    const categories = [
+      'For Buyers',
+      'For Sellers', 
+      'Infographics',
+      'Home Prices',
+      'Mortgage Rates',
+      'Inventory',
+      'Market Trends',
+      'Investment Tips',
+      'Luxury Homes',
+      'First Time Buyers'
+    ];
+    
+    const stats = await Promise.all(
+      categories.map(async (category) => ({
+        name: category,
+        count: await Post.countDocuments({ category }),
+        icon: getCategoryIcon(category)
+      }))
+    );
+    
+    res.status(200).json({
+      success: true,
+      data: stats
+    });
+  } catch (error) {
+    console.error('Get category stats error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to fetch category stats'
     });
   }
 };

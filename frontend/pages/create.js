@@ -11,6 +11,7 @@ export default function CreatePostPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    category: 'For Buyers',
     image: null
   })
   const [loading, setLoading] = useState(false)
@@ -51,6 +52,7 @@ export default function CreatePostPage() {
     const submitData = new FormData()
     submitData.append('title', formData.title)
     submitData.append('description', formData.description)
+    submitData.append('category', formData.category)
     if (formData.image) {
       submitData.append('image', formData.image)
     }
@@ -74,9 +76,22 @@ export default function CreatePostPage() {
     }
   }
 
+  const categories = [
+    { value: 'For Buyers', label: '🏠 For Buyers', description: 'Tips and advice for home buyers' },
+    { value: 'For Sellers', label: '💰 For Sellers', description: 'Strategies for selling properties' },
+    { value: 'Infographics', label: '📊 Infographics', description: 'Visual data and statistics' },
+    { value: 'Home Prices', label: '💵 Home Prices', description: 'Market pricing trends' },
+    { value: 'Mortgage Rates', label: '🏦 Mortgage Rates', description: 'Interest rate updates' },
+    { value: 'Inventory', label: '📦 Inventory', description: 'Property availability insights' },
+    { value: 'Market Trends', label: '📈 Market Trends', description: 'Current real estate trends' },
+    { value: 'Investment Tips', label: '💎 Investment Tips', description: 'Real estate investment advice' },
+    { value: 'Luxury Homes', label: '🏰 Luxury Homes', description: 'High-end property insights' },
+    { value: 'First Time Buyers', label: '🌟 First Time Buyers', description: 'Guide for new homeowners' }
+  ]
+
   return (
     <>
-      <NextSeo title="Create Post | Luxury Real Estate Blog" />
+      <NextSeo title="Create Post | Habitat Horizon Real Estate Blog" />
       
       <div className="container">
         <Navbar />
@@ -84,12 +99,15 @@ export default function CreatePostPage() {
         <main className="main">
           <div className="create-post-container">
             <h2 className="page-title" style={{ fontSize: '2rem' }}>
-              Share Your Property Insight ✨
+              Share Your Property Insight 
             </h2>
+            <p className="section-subtitle" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              Share your real estate knowledge with our community
+            </p>
             
             <form onSubmit={handleSubmit} className="create-post-form">
               <div className="form-group">
-                <label>Property Title *</label>
+                <label>Title *</label>
                 <input
                   type="text"
                   name="title"
@@ -97,7 +115,29 @@ export default function CreatePostPage() {
                   onChange={handleInputChange}
                   placeholder="e.g., 'Modern Villa with Ocean View'"
                   required
+                  maxLength="200"
                 />
+                <small>{formData.title.length}/200 characters</small>
+              </div>
+
+              <div className="form-group">
+                <label>Category *</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="category-select"
+                  required
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+                <small>
+                  {categories.find(c => c.value === formData.category)?.description}
+                </small>
               </div>
 
               <div className="form-group">
@@ -106,7 +146,7 @@ export default function CreatePostPage() {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Share details about the property..."
+                  placeholder="Share details about the property, location, amenities, or investment potential..."
                   rows="10"
                   required
                 />
@@ -120,6 +160,7 @@ export default function CreatePostPage() {
                   onChange={handleImageChange}
                   className="file-input"
                 />
+                <small>Upload a high-quality image of the property (Max 5MB)</small>
                 {previewUrl && (
                   <div className="image-preview">
                     <img src={previewUrl} alt="Preview" />
@@ -131,7 +172,7 @@ export default function CreatePostPage() {
                       }}
                       className="remove-image"
                     >
-                      Remove
+                      Remove Image
                     </button>
                   </div>
                 )}
@@ -148,7 +189,7 @@ export default function CreatePostPage() {
                       Publishing...
                     </>
                   ) : (
-                    'Publish Insight'
+                    ' Publish Insight'
                   )}
                 </button>
               </div>
@@ -157,7 +198,7 @@ export default function CreatePostPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Luxury Real Estate Blogs</p>
+          <p>©  Habitat Horizon Real Estate Blog </p>
         </footer>
       </div>
     </>

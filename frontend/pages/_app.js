@@ -10,11 +10,11 @@ function GlobalSEO() {
   const router = useRouter()
   const { q } = router.query
   
-  let seoTitle = 'Luxury Real Estate Blog'
-  let seoDescription = 'Discover expert insights about luxury real estate investments, property management, and home buying tips.'
+  let seoTitle = 'Habitat Horizon Real Estate Blog'
+  let seoDescription = 'Discover expert insights about Habitat Horizon Real estate investments, property management, and home buying tips.'
   
   if (router.pathname === '/search' && q) {
-    seoTitle = `Search Results for "${q}" | Luxury Real Estate Blog`
+    seoTitle = `Search Results for "${q}" | Habitat Horizon Real Estate Blog`
     seoDescription = `Found search results for "${q}". Discover real estate insights, property tips, and market trends.`
   }
   

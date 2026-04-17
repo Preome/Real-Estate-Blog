@@ -6,35 +6,44 @@ import toast from 'react-hot-toast'
 import { BallTriangle } from 'react-loader-spinner'
 import Image from 'next/image'
 import Navbar from '../components/Navbar'
+import CategoriesSidebar from '../components/CategoriesSidebar'
 
 export default function HomePage() {
   const router = useRouter()
+  const { category } = router.query
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
-  const [popularSearches, setPopularSearches] = useState([])
-  const [popularLoading, setPopularLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState(category || null)
+  const [totalPosts, setTotalPosts] = useState(0)
 
   useEffect(() => {
-    fetchPosts()
-    fetchPopularSearches()
-  }, [page])
+    setPage(1)
+    fetchPosts(1)
+  }, [selectedCategory])
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (pageNum = 1) => {
     try {
-      setLoading(true)
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts?page=${page}&limit=9`)
+      setLoading(pageNum === 1)
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${pageNum}&limit=9`
       
-      if (page === 1) {
+      if (selectedCategory) {
+        url = `${process.env.NEXT_PUBLIC_API_URL}/posts/category/${encodeURIComponent(selectedCategory)}?page=${pageNum}&limit=9`
+      }
+      
+      const response = await axios.get(url)
+      
+      if (pageNum === 1) {
         setPosts(response.data.data)
       } else {
         setPosts(prev => [...prev, ...response.data.data])
       }
       
-      setHasMore(response.data.pagination.page < response.data.pagination.pages)
+      setTotalPosts(response.data.pagination?.total || response.data.data.length)
+      setHasMore(response.data.pagination?.page < response.data.pagination?.pages)
       setError(null)
     } catch (err) {
       setError('Failed to load posts. Please try again later.')
@@ -44,21 +53,9 @@ export default function HomePage() {
     }
   }
 
-  const fetchPopularSearches = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/popular-searches`)
-      setPopularSearches(response.data.data)
-    } catch (error) {
-      console.error('Error fetching popular searches:', error)
-      setPopularSearches([
-        { term: "Luxury Villa", query: "luxury+villa", icon: "🏰" },
-        { term: "Beachfront", query: "beachfront", icon: "🏖️" },
-        { term: "Investment", query: "investment+property", icon: "💰" },
-        { term: "Modern Design", query: "modern+design", icon: "🎨" }
-      ])
-    } finally {
-      setPopularLoading(false)
-    }
+  const handleCategorySelect = (categoryName) => {
+    setSelectedCategory(categoryName)
+    setPage(1)
   }
 
   const handleSearch = (e) => {
@@ -68,13 +65,11 @@ export default function HomePage() {
     }
   }
 
-  const handlePopularSearch = (query) => {
-    router.push(`/search?q=${encodeURIComponent(query)}`)
-  }
-
   const loadMore = () => {
     if (hasMore && !loading) {
-      setPage(prev => prev + 1)
+      const nextPage = page + 1
+      setPage(nextPage)
+      fetchPosts(nextPage)
     }
   }
 
@@ -93,70 +88,57 @@ export default function HomePage() {
     <div className="container">
       <Navbar />
 
-      <main className="main">
-        {/* Hero Section with Search Banner */}
-        <div className="hero-section">
-          <div className="hero-content">
-            <h1 className="hero-title">Discover Your Dream Property</h1>
-            <p className="hero-subtitle">
-              Explore luxury estates, investment opportunities, and expert real estate insights
-            </p>
-            
-            {/* Search Banner */}
-            <div className="search-banner">
-              <form onSubmit={handleSearch} className="home-search-form">
-                <div className="home-search-wrapper">
-                  <span className="home-search-icon">🔍</span>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by property title, location, or author..."
-                    className="home-search-input"
-                  />
-                  <button type="submit" className="home-search-button">
-                    Search Properties
-                  </button>
-                </div>
-              </form>
+      <main className="main with-sidebar">
+        {/* Categories Sidebar - Left */}
+        <aside className="sidebar-left">
+          <CategoriesSidebar 
+            selectedCategory={selectedCategory} 
+            onSelectCategory={handleCategorySelect}
+          />
+        </aside>
+
+        {/* Main Content - Right */}
+        <div className="main-content">
+          {/* Hero Section */}
+          <div className="hero-section">
+            <div className="hero-content">
+              <h1 className="hero-title">
+                {selectedCategory ? `${selectedCategory}` : 'Discover Your Dream Property'}
+              </h1>
+              <p className="hero-subtitle">
+                {selectedCategory 
+                  ? `Explore ${selectedCategory.toLowerCase()} insights and properties`
+                  : 'Explore Habitat Horizon, investment opportunities, and expert real estate insights'
+                }
+              </p>
               
-              {/* Dynamic Popular Searches */}
-              <div className="popular-searches">
-                <span className="popular-label">Popular:</span>
-                {popularLoading ? (
-                  <span className="popular-loading">Loading...</span>
-                ) : (
-                  popularSearches.map((item, index) => (
-                    <button 
-                      key={index}
-                      onClick={() => handlePopularSearch(item.query)} 
-                      className="popular-tag"
-                    >
-                      {item.icon} {item.term}
+              {/* Search Banner */}
+              <div className="search-banner">
+                <form onSubmit={handleSearch} className="home-search-form">
+                  <div className="home-search-wrapper">
+                    <span className="home-search-icon">🔍</span>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by property title, location, or author..."
+                      className="home-search-input"
+                    />
+                    <button type="submit" className="home-search-button">
+                      Search Properties
                     </button>
-                  ))
-                )}
+                  </div>
+                </form>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Featured Properties Section */}
-        <div className="featured-section">
-          <div className="section-header">
-            <h2 className="page-title">Featured Properties</h2>
-            <p className="section-subtitle">Discover the most extraordinary properties shared by our community</p>
+          {/* Results Info */}
+          <div className="results-info">
+            <p>Found {totalPosts} post{totalPosts !== 1 ? 's' : ''}</p>
           </div>
-          
-          {error && (
-            <div className="error-message">
-              <span>⚠️ {error}</span>
-              <button onClick={fetchPosts} className="retry-btn">
-                Try Again
-              </button>
-            </div>
-          )}
 
+          {/* Posts Grid */}
           <div className="posts-grid">
             {posts.map((post, index) => (
               <article 
@@ -174,7 +156,9 @@ export default function HomePage() {
                       style={{ objectFit: 'cover' }}
                       loading={index < 3 ? "eager" : "lazy"}
                     />
-                    <div className="post-category">Featured</div>
+                    {post.category && (
+                      <div className="post-category-badge">{post.category}</div>
+                    )}
                   </div>
                 )}
                 <div className="post-content">
@@ -217,9 +201,9 @@ export default function HomePage() {
 
           {posts.length === 0 && !error && !loading && (
             <div className="no-posts glass">
-              <div className="no-posts-icon">🏰</div>
-              <h3>No properties shared yet</h3>
-              <p>Be the first to share your real estate insights with our community!</p>
+              <div className="no-posts-icon">📂</div>
+              <h3>No posts found in {selectedCategory || 'this category'}</h3>
+              <p>Be the first to share your real estate insights!</p>
               <Link href="/create" className="create-btn">
                 Share Your First Property
               </Link>
@@ -229,7 +213,7 @@ export default function HomePage() {
       </main>
 
       <footer className="footer">
-        <p>© 2024 Luxury Real Estate Blog | Crafted with 💜 for property enthusiasts</p>
+        <p>©  Habitat Horizon Real Estate Blog </p>
       </footer>
     </div>
   )

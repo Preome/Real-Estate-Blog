@@ -18,7 +18,7 @@ export async function getServerSideProps(context) {
     );
     
     // Calculate SEO data on server
-    const siteTitle = 'Luxury Real Estate Blog'
+    const siteTitle = 'Habitat Horizon Real Estate Blog'
     const searchQueryText = q || ''
     const total = response.data.pagination?.total || 0
     const seoTitle = searchQueryText 
@@ -47,7 +47,7 @@ export async function getServerSideProps(context) {
   } catch (error) {
     console.error('SSR Search error:', error);
     const searchQueryText = context.query.q || ''
-    const siteTitle = 'Luxury Real Estate Blog'
+    const siteTitle = 'Habitat Horizon Real Estate Blog'
     
     return {
       props: {
@@ -147,8 +147,8 @@ export default function SearchPage({
   }
 
   const fullSeoTitle = searchQuery 
-    ? `Search Results for "${searchQuery}" | Luxury Real Estate Blog`
-    : `Search | Luxury Real Estate Blog`
+    ? `Search Results for "${searchQuery}" | Habitat Horizon Real Estate Blog`
+    : `Search | Habitat Horizon Real Estate Blog`
   const fullSeoDescription = searchQuery 
     ? `Found ${pagination.total} result${pagination.total !== 1 ? 's' : ''} for "${searchQuery}". Discover real estate insights, property tips, and market trends.`
     : `Search for properties, real estate insights, and market trends.`
@@ -176,8 +176,8 @@ export default function SearchPage({
       <Head>
         <title>{fullSeoTitle}</title>
         <meta name="description" content={fullSeoDescription} />
-        <meta name="keywords" content={`${searchQuery}, real estate, luxury homes, property search, real estate blog`} />
-        <meta name="author" content="Luxury Real Estate Blog" />
+        <meta name="keywords" content={`${searchQuery}, real estate, luxury homes, property search, Real Estate Blog`} />
+        <meta name="author" content="Habitat Horizon Real Estate Blog" />
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         <meta property="og:title" content={fullSeoTitle} />
@@ -185,7 +185,7 @@ export default function SearchPage({
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://yourdomain.com/search?q=${encodeURIComponent(searchQuery || '')}`} />
         <meta property="og:image" content="https://res.cloudinary.com/demo/image/upload/v1312461206/sample.jpg" />
-        <meta property="og:site_name" content="Luxury Real Estate Blog" />
+        <meta property="og:site_name" content="Habitat Horizon Real Estate Blog" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={fullSeoTitle} />
         <meta name="twitter:description" content={fullSeoDescription} />
@@ -338,7 +338,7 @@ export default function SearchPage({
         </main>
 
         <footer className="footer">
-          <p>© 2024 Luxury Real Estate Blog | Crafted with 💜 for property enthusiasts</p>
+          <p>©  Real Estate Blog </p>
         </footer>
       </div>
     </>

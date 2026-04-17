@@ -29,6 +29,11 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  category: {
+    type: String,
+    enum: ['For Buyers', 'For Sellers', 'Infographics', 'Home Prices', 'Mortgage Rates', 'Inventory', 'Market Trends', 'Investment Tips', 'Luxury Homes', 'First Time Buyers'],
+    default: 'For Buyers'
+  },
   createdAt: {
     type: Date,
     default: Date.now

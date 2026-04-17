@@ -105,7 +105,7 @@ export default function SinglePostPage() {
           </div>
         </main>
         <footer className="footer">
-          <p>©  Luxury Real Estate Blog </p>
+          <p>©  Habitat Horizon Real Estate Blog </p>
         </footer>
       </div>
     )
@@ -114,7 +114,7 @@ export default function SinglePostPage() {
   return (
     <>
       <NextSeo
-        title={`${post.title} | Luxury Real Estate Blog`}
+        title={`${post.title} | Habitat Horizon Real Estate Blog`}
         description={post.description.substring(0, 160)}
         canonical={`https://yourdomain.com/post/${post._id}`}
         openGraph={{
@@ -189,7 +189,7 @@ export default function SinglePostPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Luxury Real Estate Blog </p>
+          <p>©  Habitat Horizon Real Estate Blog </p>
         </footer>
       </div>
     </>

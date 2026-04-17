@@ -25,7 +25,7 @@ export default function Navbar() {
 
   return (
     <header className="header glass">
-      <h1>🏰 Luxury Estates</h1>
+      <h1>🏰 Habitat Horizon</h1>
       
       {/* Desktop Navigation */}
       <div className="desktop-nav">

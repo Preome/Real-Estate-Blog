@@ -62,11 +62,11 @@ export default function RegisterPage() {
 
   return (
     <>
-      <NextSeo title="Register | Luxury Real Estate Blog" />
+      <NextSeo title="Register | Habitat Horizon Real Estate Blog" />
       
       <div className="container">
         <header className="header glass">
-          <h1>🏰 Luxury Estates</h1>
+          <h1>🏰 Habitat Horizon</h1>
           <nav className="nav">
             <Link href="/">Home</Link>
             <Link href="/login">Login</Link>
@@ -150,7 +150,7 @@ export default function RegisterPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Luxury Real Estate Blog </p>
+          <p>©  Habitat Horizon Real Estate Blog </p>
         </footer>
       </div>
     </>

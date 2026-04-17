@@ -177,7 +177,7 @@ export default function EditPostPage() {
 
   return (
     <>
-      <NextSeo title="Edit Post | Luxury Real Estate Blog" />
+      <NextSeo title="Edit Post | Habitat Horizon Real Estate Blog" />
       
       <div className="container">
         <Navbar />
@@ -193,7 +193,7 @@ export default function EditPostPage() {
             
             <form onSubmit={handleSubmit} className="create-post-form">
               <div className="form-group">
-                <label htmlFor="title">Property Title *</label>
+                <label htmlFor="title">Title *</label>
                 <input
                   type="text"
                   id="title"
@@ -273,7 +273,7 @@ export default function EditPostPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Luxury Real Estate Blog </p>
+          <p>©  Habitat Horizon Real Estate Blog </p>
         </footer>
       </div>
     </>

@@ -8,54 +8,28 @@ const {
   getMyPosts,
   searchPosts,
   getSearchSuggestions,
-  getPopularSearches
+  getPopularSearches,
+  getPostsByCategory,
+  getCategoryStats
 } = require('../controllers/postController');
 const { protect } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
-// ============================================
-// PUBLIC ROUTES (No authentication required)
-// ============================================
-
-// Get all posts (public)
+// Public routes
 router.get('/', getPosts);
-
-// Search posts (public)
 router.get('/search', searchPosts);
-
-// Get search suggestions (public)
 router.get('/suggestions', getSearchSuggestions);
-
-// Get popular searches (public)
 router.get('/popular-searches', getPopularSearches);
-
-// ============================================
-// SPECIFIC ROUTES (Must come before /:id)
-// ============================================
-
-// Get user's own posts (protected) - MUST BE BEFORE /:id
+router.get('/categories/stats', getCategoryStats);  // Add this
+router.get('/category/:category', getPostsByCategory);  // Add this
 router.get('/my-posts', protect, getMyPosts);
-
-// ============================================
-// PARAMETERIZED ROUTES (Must come last)
-// ============================================
-
-// Get single post by ID (public)
 router.get('/:id', getSinglePost);
 
-// ============================================
-// PROTECTED ROUTES (Authentication required)
-// ============================================
-
-// Create new post
+// Protected routes
 router.post('/', protect, upload.single('image'), createPost);
-
-// Update post by ID
 router.put('/:id', protect, upload.single('image'), updatePost);
-
-// Delete post by ID
 router.delete('/:id', protect, deletePost);
 
 module.exports = router;

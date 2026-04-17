@@ -99,8 +99,8 @@ export default function MyPostsPage() {
   return (
     <>
       <NextSeo 
-        title="My Posts | Luxury Real Estate Blog" 
-        description="Manage your property insights and real estate blog posts"
+        title="My Posts | Habitat Horizon Real Estate Blog" 
+        description="Manage your property insights and Real Estate Blog posts"
       />
       
       <div className="container">
@@ -176,7 +176,7 @@ export default function MyPostsPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Luxury Real Estate Blogs</p>
+          <p>©  Habitat Horizon Real Estate Blogs</p>
         </footer>
       </div>
     </>

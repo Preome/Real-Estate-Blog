@@ -1,7 +1,7 @@
 {
   "name": "real-estate-blog-backend",
   "version": "1.0.0",
-  "description": "Backend API for real estate blog with authentication",
+  "description": "Backend API for Real Estate Blog with authentication",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
