@@ -5,7 +5,6 @@ import { NextSeo } from 'next-seo'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { BallTriangle } from 'react-loader-spinner'
-import Image from 'next/image'
 import Navbar from '../../components/Navbar'
 
 export default function SinglePostPage() {
@@ -15,14 +14,12 @@ export default function SinglePostPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
-  const [isAuthor, setIsAuthor] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
-    // Get current user from localStorage
     const userData = localStorage.getItem('user')
     if (userData) {
-      const user = JSON.parse(userData)
-      setCurrentUser(user)
+      setCurrentUser(JSON.parse(userData))
     }
   }, [])
 
@@ -38,57 +35,38 @@ export default function SinglePostPage() {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`)
       setPost(response.data.data)
       setError(null)
-      
-      // Check if current user is the author
-      const userData = localStorage.getItem('user')
-      if (userData && response.data.data) {
-        const user = JSON.parse(userData)
-        setIsAuthor(user.id === response.data.data.author._id)
-      }
     } catch (err) {
+      console.error('Error fetching post:', err)
       setError('Post not found or has been deleted')
       toast.error('Failed to load post')
-      console.error('Error fetching post:', err)
     } finally {
       setLoading(false)
     }
   }
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) {
-          toast.error('You must be logged in to delete posts')
-          router.push('/login')
-          return
-        }
-        
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        toast.success('Post deleted successfully')
-        router.push('/')
-      } catch (error) {
-        console.error('Error deleting post:', error)
-        if (error.response?.status === 403) {
-          toast.error('You are not authorized to delete this post')
-        } else if (error.response?.status === 401) {
-          toast.error('Please login to delete posts')
-          router.push('/login')
-        } else {
-          toast.error('Failed to delete post')
-        }
-      }
+    if (!window.confirm('Are you sure you want to delete this post?')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      toast.success('Post deleted successfully')
+      router.push('/')
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      toast.error(error.response?.data?.error || 'Failed to delete post')
     }
   }
 
   if (loading) {
     return (
-      <div className="loader-container">
-        <BallTriangle color="#ffffff" height={100} width={100} />
+      <div className="container">
+        <Navbar />
+        <div className="loader-container">
+          <BallTriangle color="#ffffff" height={100} width={100} />
+        </div>
       </div>
     )
   }
@@ -97,44 +75,28 @@ export default function SinglePostPage() {
     return (
       <div className="container">
         <Navbar />
-        <main className="main">
-          <div className="error-container">
-            <h2>🔍 {error || 'Post not found'}</h2>
-            <p>The property insight you're looking for doesn't exist or has been removed.</p>
-            <Link href="/" className="back-home">Explore Other Properties</Link>
-          </div>
-        </main>
-        <footer className="footer">
-          <p>©  Habitat Horizon Real Estate Blog </p>
-        </footer>
+        <div className="error-container">
+          <h2>🔍 {error || 'Post not found'}</h2>
+          <p>The property insight you're looking for doesn't exist or has been removed.</p>
+          <Link href="/" className="back-home">Browse Properties</Link>
+        </div>
       </div>
     )
   }
 
+  const isAuthor = currentUser?.id === post.author?._id
+
   return (
     <>
       <NextSeo
-        title={`${post.title} | Habitat Horizon Real Estate Blog`}
+        title={post.title}
         description={post.description.substring(0, 160)}
-        canonical={`https://yourdomain.com/post/${post._id}`}
-        openGraph={{
-          title: post.title,
-          description: post.description.substring(0, 160),
-          url: `https://yourdomain.com/post/${post._id}`,
-          type: 'article',
-          article: {
-            publishedTime: post.createdAt,
-            modifiedTime: post.updatedAt,
-          },
-          images: post.imageUrl ? [
-            {
-              url: post.imageUrl,
-              alt: post.title,
-              width: 1200,
-              height: 630,
-            }
-          ] : [],
-        }}
+        image={post.imageUrl}
+        url={`https://yourdomain.com/post/${post._id}`}
+        author={post.authorName}
+        publishedTime={post.createdAt}
+        modifiedTime={post.updatedAt}
+        type="article"
       />
       
       <div className="container">
@@ -142,46 +104,56 @@ export default function SinglePostPage() {
 
         <main className="main">
           <article className="single-post">
-            <Link href="/" className="back-link">
-              ← Back to all properties
-            </Link>
+            <Link href="/" className="back-link">← Back to properties</Link>
             
+            {/* Full Image Display - Improved Version */}
             {post.imageUrl && (
               <div className="post-hero-image">
-                <Image
-                  src={post.imageUrl}
-                  alt={post.title}
-                  width={1200}
-                  height={600}
-                  style={{ objectFit: 'cover' }}
-                  priority={true}
-                />
+                <div className="full-image-container">
+                  {!imageLoaded && (
+                    <div className="image-loader">
+                      <BallTriangle color="#667eea" height={40} width={40} />
+                    </div>
+                  )}
+                  <img 
+                    src={post.imageUrl} 
+                    alt={post.title}
+                    className="full-post-image"
+                    style={{ display: imageLoaded ? 'block' : 'none' }}
+                    onLoad={() => setImageLoaded(true)}
+                    onError={(e) => {
+                      console.error('Image failed to load');
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
               </div>
             )}
             
             <h1 className="post-title">{post.title}</h1>
             
             <div className="post-metadata">
-              <span>📅 Published: {new Date(post.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
+              <span>📅 {new Date(post.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric', 
+                month: 'long', 
                 day: 'numeric'
               })}</span>
-              <span>👤 Author: {post.author?.name || 'Unknown'}</span>
-              {post.author?._id === currentUser?.id && (
-                <span className="author-badge">✏️ Your Post</span>
+              <span>👤 Author: {post.authorName}</span>
+              {post.category && (
+                <span className="category-tag">📂 {post.category}</span>
               )}
+              <span>📖 {Math.ceil(post.description.length / 1000)} min read</span>
+              {isAuthor && <span className="author-badge">✏️ Your Post</span>}
             </div>
             
             <div className="post-body">
               <p>{post.description}</p>
             </div>
             
-            {/* Only show delete button to the author */}
             {isAuthor && (
               <div className="post-actions">
                 <button onClick={handleDelete} className="delete-btn">
-                  🗑️ Delete Property Insight
+                  🗑️ Delete Post
                 </button>
               </div>
             )}
@@ -189,7 +161,7 @@ export default function SinglePostPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Habitat Horizon Real Estate Blog </p>
+          <p>© 2024 Habitat Horizon Real Estate Blog | Crafted with 💜 for property enthusiasts</p>
         </footer>
       </div>
     </>

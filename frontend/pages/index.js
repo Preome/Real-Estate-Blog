@@ -19,11 +19,17 @@ export default function HomePage() {
   const [hasMore, setHasMore] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(category || null)
   const [totalPosts, setTotalPosts] = useState(0)
+  const [popularSearches, setPopularSearches] = useState([])
+  const [popularLoading, setPopularLoading] = useState(true)
 
   useEffect(() => {
     setPage(1)
     fetchPosts(1)
   }, [selectedCategory])
+
+  useEffect(() => {
+    fetchPopularSearches()
+  }, [])
 
   const fetchPosts = async (pageNum = 1) => {
     try {
@@ -53,6 +59,26 @@ export default function HomePage() {
     }
   }
 
+  const fetchPopularSearches = async () => {
+    try {
+      setPopularLoading(true)
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/popular-searches`)
+      console.log('Popular searches response:', response.data)
+      setPopularSearches(response.data.data || [])
+    } catch (error) {
+      console.error('Error fetching popular searches:', error)
+      // Set default fallback searches
+      setPopularSearches([
+        { term: "Luxury Villa", query: "luxury+villa", icon: "🏰", count: 0 },
+        { term: "Beachfront", query: "beachfront", icon: "🏖️", count: 0 },
+        { term: "Modern Design", query: "modern+design", icon: "🎨", count: 0 },
+        { term: "Investment", query: "investment", icon: "💰", count: 0 }
+      ])
+    } finally {
+      setPopularLoading(false)
+    }
+  }
+
   const handleCategorySelect = (categoryName) => {
     setSelectedCategory(categoryName)
     setPage(1)
@@ -63,6 +89,10 @@ export default function HomePage() {
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
+  }
+
+  const handlePopularSearch = (query) => {
+    router.push(`/search?q=${encodeURIComponent(query)}`)
   }
 
   const loadMore = () => {
@@ -129,6 +159,24 @@ export default function HomePage() {
                     </button>
                   </div>
                 </form>
+                
+                {/* Popular Searches Section */}
+                <div className="popular-searches">
+                  <span className="popular-label">Popular Searches:</span>
+                  {popularLoading ? (
+                    <span className="popular-loading">Loading...</span>
+                  ) : (
+                    popularSearches.map((item, index) => (
+                      <button 
+                        key={index}
+                        onClick={() => handlePopularSearch(item.query)} 
+                        className="popular-tag"
+                      >
+                        {item.icon} {item.term}
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -213,7 +261,7 @@ export default function HomePage() {
       </main>
 
       <footer className="footer">
-        <p>©  Habitat Horizon Real Estate Blog </p>
+        <p>© Habitat Horizon Real Estate Blog</p>
       </footer>
     </div>
   )
