@@ -26,7 +26,7 @@ A full-stack real estate blog platform where users can register, create/edit/del
 
 ### Backend
 - **Node.js** 
-- **PostgreSQL** - Relational database
+- **PostgreSQL** -  database
 - **JWT** & **bcrypt** - Authentication & password hashing
 - **Cloudinary** - Image upload/storage
 
