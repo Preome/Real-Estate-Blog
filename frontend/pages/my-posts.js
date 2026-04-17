@@ -155,15 +155,15 @@ export default function MyPostsPage() {
                             day: 'numeric'
                           })}</span>
                           <span style={{ fontSize: '0.75rem', color: '#10b981' }}>
-                            ✏️ Last updated: {new Date(post.updatedAt).toLocaleDateString()}
+                             Last updated: {new Date(post.updatedAt).toLocaleDateString()}
                           </span>
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <Link href={`/edit-post/${post._id}`} className="edit-btn">
-                            ✏️ Edit
+                             Edit
                           </Link>
                           <button onClick={() => handleDelete(post._id)} className="delete-btn-small">
-                            🗑️ Delete
+                             Delete
                           </button>
                         </div>
                       </div>

@@ -155,7 +155,7 @@ export default function HomePage() {
                       className="home-search-input"
                     />
                     <button type="submit" className="home-search-button">
-                      Search Properties
+                      Search 
                     </button>
                   </div>
                 </form>
@@ -225,7 +225,7 @@ export default function HomePage() {
                       <span>👤 {post.authorName}</span>
                     </div>
                     <Link href={`/post/${post._id}`} className="read-more">
-                      Explore Property →
+                      Explore →
                     </Link>
                   </div>
                 </div>

@@ -104,7 +104,7 @@ export default function SinglePostPage() {
 
         <main className="main">
           <article className="single-post">
-            <Link href="/" className="back-link">← Back to properties</Link>
+            <Link href="/" className="back-link">← Back to Home </Link>
             
             {/* Full Image Display - Improved Version */}
             {post.imageUrl && (
