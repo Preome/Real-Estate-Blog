@@ -9,6 +9,10 @@
 
 A full-stack real estate blog platform where users can register, create/edit/delete property posts with images, search listings, and manage their content. Features include responsive design, authentication, image uploads to Cloudinary, real-time search, and optimized performance with skeleton loaders.
 
+### 🔴 Live Links
+| Frontend | Backend |
+|----------|---------|
+| [https://real-estate-blog-1.onrender.com](https://real-estate-blog-1.onrender.com) | [https://real-estate-blog-674h.onrender.com](https://real-estate-blog-674h.onrender.com) |
 
 
 ## 🚀 Tech Stack
@@ -52,14 +56,10 @@ A full-stack real estate blog platform where users can register, create/edit/del
 - **Loading States** - Skeleton loaders and spinners
 - **Toast Notifications** - Real-time user feedback
 
-## 🛠️ Live Deployment & Setup Instructions
+## 🛠️  Setup Instructions
 
-### 🔴 Live Links
-| Frontend | Backend |
-|----------|---------|
-| [https://real-estate-blog-1.onrender.com](https://real-estate-blog-1.onrender.com) | [srv-d7h6uod8nd3s73ef5tdg](srv-d7h6uod8nd3s73ef5tdg) |
 
-### Prerequisites (Local Development)
+### Prerequisites 
 - Node.js (v18+)
 - PostgreSQL database 
 - Cloudinary account
