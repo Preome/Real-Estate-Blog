@@ -17,7 +17,6 @@ export async function getServerSideProps(context) {
       `${API_URL}/posts/search?q=${encodeURIComponent(q)}&page=${page}&limit=9`
     );
     
-    // Calculate SEO data on server
     const siteTitle = 'Habitat Horizon Real Estate Blog'
     const searchQueryText = q || ''
     const total = response.data.pagination?.total || 0
@@ -298,32 +297,38 @@ export default function SearchPage({
 
             <div className="posts-grid">
               {posts.map((post) => (
-                <article key={post._id} className="post-card">
-                  {post.imageUrl && (
-                    <div className="post-image">
-                      <Image
-                        src={post.imageUrl}
-                        alt={post.title}
-                        width={400}
-                        height={250}
-                        style={{ objectFit: 'cover' }}
-                      />
+                <Link 
+                  key={post._id} 
+                  href={`/post/${post._id}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <article className="post-card">
+                    {post.imageUrl && (
+                      <div className="post-image">
+                        <Image
+                          src={post.imageUrl}
+                          alt={post.title}
+                          width={400}
+                          height={250}
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                    )}
+                    <div className="post-content">
+                      <h3 className="post-title">{post.title}</h3>
+                      <p className="post-description">
+                        {post.description.substring(0, 120)}...
+                      </p>
+                      <div className="post-meta">
+                        <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
+                        <span>👤 {post.authorName}</span>
+                        <span className="read-more">
+                          Read More →
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  <div className="post-content">
-                    <h3 className="post-title">{post.title}</h3>
-                    <p className="post-description">
-                      {post.description.substring(0, 120)}...
-                    </p>
-                    <div className="post-meta">
-                      <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
-                      <span>👤 {post.authorName}</span>
-                      <Link href={`/post/${post._id}`} className="read-more">
-                        Read More →
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+                </Link>
               ))}
             </div>
 
@@ -338,7 +343,7 @@ export default function SearchPage({
         </main>
 
         <footer className="footer">
-          <p>©  Real Estate Blog </p>
+          <p>© Real Estate Blog</p>
         </footer>
       </div>
     </>

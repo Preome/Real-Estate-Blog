@@ -15,7 +15,6 @@ export default function MyPostsPage() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem('token')
     const userData = localStorage.getItem('user')
     
@@ -33,7 +32,6 @@ export default function MyPostsPage() {
     try {
       const token = localStorage.getItem('token')
       
-      // Fixed API endpoint - removed duplicate /my-posts
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -70,7 +68,6 @@ export default function MyPostsPage() {
         })
         
         toast.success('Post deleted successfully')
-        // Remove the deleted post from the list
         setPosts(posts.filter(post => post._id !== postId))
       } catch (error) {
         console.error('Error deleting post:', error)
@@ -129,46 +126,53 @@ export default function MyPostsPage() {
               </p>
               <div className="posts-grid">
                 {posts.map((post) => (
-                  <article key={post._id} className="post-card">
-                    {post.imageUrl && (
-                      <div className="post-image">
-                        <Image
-                          src={post.imageUrl}
-                          alt={post.title}
-                          width={400}
-                          height={250}
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    )}
-                    <div className="post-content">
-                      <h3 className="post-title">{post.title}</h3>
-                      <p className="post-description">
-                        {post.description.substring(0, 120)}
-                        {post.description.length > 120 ? '...' : ''}
-                      </p>
-                      <div className="post-meta">
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                          <span>📅 {new Date(post.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}</span>
-                          <span style={{ fontSize: '0.75rem', color: '#10b981' }}>
-                             Last updated: {new Date(post.updatedAt).toLocaleDateString()}
-                          </span>
+                  <div key={post._id} className="post-card-wrapper">
+                    <Link 
+                      href={`/post/${post._id}`}
+                      style={{ textDecoration: 'none', display: 'block' }}
+                    >
+                      <article className="post-card">
+                        {post.imageUrl && (
+                          <div className="post-image">
+                            <Image
+                              src={post.imageUrl}
+                              alt={post.title}
+                              width={400}
+                              height={250}
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </div>
+                        )}
+                        <div className="post-content">
+                          <h3 className="post-title">{post.title}</h3>
+                          <p className="post-description">
+                            {post.description.substring(0, 120)}
+                            {post.description.length > 120 ? '...' : ''}
+                          </p>
+                          <div className="post-meta">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                              <span>📅 {new Date(post.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}</span>
+                              <span style={{ fontSize: '0.75rem', color: '#10b981' }}>
+                                Last updated: {new Date(post.updatedAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <Link href={`/edit-post/${post._id}`} className="edit-btn">
-                             Edit
-                          </Link>
-                          <button onClick={() => handleDelete(post._id)} className="delete-btn-small">
-                             Delete
-                          </button>
-                        </div>
-                      </div>
+                      </article>
+                    </Link>
+                    <div className="post-actions-buttons">
+                      <Link href={`/edit-post/${post._id}`} className="edit-btn">
+                         Edit
+                      </Link>
+                      <button onClick={() => handleDelete(post._id)} className="delete-btn-small">
+                         Delete
+                      </button>
                     </div>
-                  </article>
+                  </div>
                 ))}
               </div>
             </>
@@ -176,7 +180,7 @@ export default function MyPostsPage() {
         </main>
 
         <footer className="footer">
-          <p>©  Habitat Horizon Real Estate Blogs</p>
+          <p>© Habitat Horizon Real Estate Blogs</p>
         </footer>
       </div>
     </>

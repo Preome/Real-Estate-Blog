@@ -1759,3 +1759,47 @@ body {
   }
 }
 
+.post-card {
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;  /* Add this line */
+  position: relative;
+}
+
+
+/* My Posts Page - Action Buttons */
+.post-card-wrapper {
+  position: relative;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.post-card-wrapper:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+.post-actions-buttons {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-top: 1px solid #f0f0f0;
+}
+
+.post-card-wrapper .post-card {
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.post-card-wrapper .post-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+

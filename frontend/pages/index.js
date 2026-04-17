@@ -67,7 +67,6 @@ export default function HomePage() {
       setPopularSearches(response.data.data || [])
     } catch (error) {
       console.error('Error fetching popular searches:', error)
-      // Set default fallback searches
       setPopularSearches([
         { term: "Luxury Villa", query: "luxury+villa", icon: "🏰", count: 0 },
         { term: "Beachfront", query: "beachfront", icon: "🏖️", count: 0 },
@@ -119,7 +118,6 @@ export default function HomePage() {
       <Navbar />
 
       <main className="main with-sidebar">
-        {/* Categories Sidebar - Left */}
         <aside className="sidebar-left">
           <CategoriesSidebar 
             selectedCategory={selectedCategory} 
@@ -127,9 +125,7 @@ export default function HomePage() {
           />
         </aside>
 
-        {/* Main Content - Right */}
         <div className="main-content">
-          {/* Hero Section */}
           <div className="hero-section">
             <div className="hero-content">
               <h1 className="hero-title">
@@ -142,7 +138,6 @@ export default function HomePage() {
                 }
               </p>
               
-              {/* Search Banner */}
               <div className="search-banner">
                 <form onSubmit={handleSearch} className="home-search-form">
                   <div className="home-search-wrapper">
@@ -160,7 +155,6 @@ export default function HomePage() {
                   </div>
                 </form>
                 
-                {/* Popular Searches Section */}
                 <div className="popular-searches">
                   <span className="popular-label">Popular Searches:</span>
                   {popularLoading ? (
@@ -181,55 +175,58 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Results Info */}
           <div className="results-info">
             <p>Found {totalPosts} post{totalPosts !== 1 ? 's' : ''}</p>
           </div>
 
-          {/* Posts Grid */}
           <div className="posts-grid">
             {posts.map((post, index) => (
-              <article 
+              <Link 
                 key={post._id} 
-                className="post-card"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                href={`/post/${post._id}`}
+                style={{ textDecoration: 'none' }}
               >
-                {post.imageUrl && (
-                  <div className="post-image">
-                    <Image
-                      src={post.imageUrl}
-                      alt={post.title}
-                      width={400}
-                      height={250}
-                      style={{ objectFit: 'cover' }}
-                      loading={index < 3 ? "eager" : "lazy"}
-                    />
-                    {post.category && (
-                      <div className="post-category-badge">{post.category}</div>
-                    )}
-                  </div>
-                )}
-                <div className="post-content">
-                  <h3 className="post-title">{post.title}</h3>
-                  <p className="post-description">
-                    {post.description.substring(0, 120)}
-                    {post.description.length > 120 ? '...' : ''}
-                  </p>
-                  <div className="post-meta">
-                    <div className="post-meta-info">
-                      <span>📅 {new Date(post.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}</span>
-                      <span>👤 {post.authorName}</span>
+                <article 
+                  className="post-card"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {post.imageUrl && (
+                    <div className="post-image">
+                      <Image
+                        src={post.imageUrl}
+                        alt={post.title}
+                        width={400}
+                        height={250}
+                        style={{ objectFit: 'cover' }}
+                        loading={index < 3 ? "eager" : "lazy"}
+                      />
+                      {post.category && (
+                        <div className="post-category-badge">{post.category}</div>
+                      )}
                     </div>
-                    <Link href={`/post/${post._id}`} className="read-more">
-                      Explore →
-                    </Link>
+                  )}
+                  <div className="post-content">
+                    <h3 className="post-title">{post.title}</h3>
+                    <p className="post-description">
+                      {post.description.substring(0, 120)}
+                      {post.description.length > 120 ? '...' : ''}
+                    </p>
+                    <div className="post-meta">
+                      <div className="post-meta-info">
+                        <span>📅 {new Date(post.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}</span>
+                        <span>👤 {post.authorName}</span>
+                      </div>
+                      <span className="read-more">
+                        Explore →
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
+              </Link>
             ))}
           </div>
 
