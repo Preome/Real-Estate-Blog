@@ -1,4 +1,5 @@
 const Post = require('../models/Post');
+const Search = require('../models/Search');
 const { uploadToCloudinary } = require('../middleware/upload');
 
 // @desc    Create a new post
@@ -244,7 +245,7 @@ exports.getMyPosts = async (req, res) => {
   }
 };
 
-// @desc    Search posts with filters
+// @desc    Search posts with filters (with search tracking)
 // @route   GET /api/posts/search
 // @access  Public
 exports.searchPosts = async (req, res) => {
@@ -270,6 +271,9 @@ exports.searchPosts = async (req, res) => {
           { authorName: { $regex: q, $options: 'i' } }
         ]
       };
+      
+      // Track this search term (don't await to avoid slowing response)
+      Search.trackSearch(q).catch(err => console.error('Search tracking error:', err));
     }
     
     // Get total count for pagination
@@ -341,6 +345,121 @@ exports.getSearchSuggestions = async (req, res) => {
     res.status(500).json({ 
       success: false,
       error: 'Failed to get suggestions'
+    });
+  }
+};
+
+// Helper function to assign icons based on search term
+function getIconForTerm(term) {
+  const termLower = term.toLowerCase();
+  if (termLower.includes('luxury') || termLower.includes('villa')) return '🏰';
+  if (termLower.includes('beach') || termLower.includes('ocean') || termLower.includes('sea')) return '🏖️';
+  if (termLower.includes('invest') || termLower.includes('profit') || termLower.includes('roi')) return '💰';
+  if (termLower.includes('modern') || termLower.includes('design') || termLower.includes('contemporary')) return '🎨';
+  if (termLower.includes('smart') || termLower.includes('tech') || termLower.includes('automation')) return '🤖';
+  if (termLower.includes('penthouse') || termLower.includes('high') || termLower.includes('sky')) return '🏙️';
+  if (termLower.includes('garden') || termLower.includes('green') || termLower.includes('nature')) return '🌳';
+  if (termLower.includes('downtown') || termLower.includes('city') || termLower.includes('urban')) return '🏢';
+  if (termLower.includes('condo')) return '🏢';
+  if (termLower.includes('apartment')) return '🏢';
+  if (termLower.includes('house') || termLower.includes('home')) return '🏠';
+  if (termLower.includes('pool')) return '🏊';
+  if (termLower.includes('mountain') || termLower.includes('view')) return '⛰️';
+  if (termLower.includes('cheap') || termLower.includes('affordable') || termLower.includes('budget')) return '💵';
+  return '🔍';
+}
+
+// @desc    Get popular search terms (REAL - based on actual searches)
+// @route   GET /api/posts/popular-searches
+// @access  Public
+exports.getPopularSearches = async (req, res) => {
+  try {
+    // FIRST: Get popular searches from database (actual user searches)
+    const popularFromDB = await Search.getPopular(8);
+    
+    if (popularFromDB.length > 0) {
+      // Format popular searches from actual user data
+      const popularSearches = popularFromDB.map(search => ({
+        term: search.term.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+        query: search.term,
+        icon: getIconForTerm(search.term),
+        count: search.count,
+        source: 'database'
+      }));
+      
+      return res.status(200).json({
+        success: true,
+        data: popularSearches,
+        source: 'database'
+      });
+    }
+    
+    // SECOND: If no searches yet, get popular terms from post content
+    const posts = await Post.find({}, { title: 1, description: 1 });
+    const wordFrequency = {};
+    
+    // Important real estate keywords to track
+    const importantWords = [
+      'luxury', 'villa', 'beach', 'modern', 'investment', 'penthouse', 
+      'garden', 'downtown', 'condo', 'apartment', 'house', 'estate', 
+      'pool', 'ocean', 'mountain', 'smart', 'green', 'city', 'view'
+    ];
+    
+    posts.forEach(post => {
+      const text = (post.title + ' ' + post.description).toLowerCase();
+      const words = text.match(/\b[a-z]{3,}\b/g) || [];
+      
+      words.forEach(word => {
+        if (importantWords.includes(word)) {
+          wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+        }
+      });
+    });
+    
+    const sortedWords = Object.entries(wordFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+    
+    if (sortedWords.length > 0) {
+      const popularSearches = sortedWords.map(([word, count]) => ({
+        term: word.charAt(0).toUpperCase() + word.slice(1),
+        query: word,
+        icon: getIconForTerm(word),
+        count: count,
+        source: 'content'
+      }));
+      
+      return res.status(200).json({
+        success: true,
+        data: popularSearches,
+        source: 'content'
+      });
+    }
+    
+    // THIRD: Ultimate fallback - common real estate terms (only if no data exists)
+    const fallbackSearches = [
+      { term: "Luxury", query: "luxury", icon: "🏰", count: 0, source: 'fallback' },
+      { term: "Modern", query: "modern", icon: "🎨", count: 0, source: 'fallback' },
+      { term: "Beach", query: "beach", icon: "🏖️", count: 0, source: 'fallback' },
+      { term: "Investment", query: "investment", icon: "💰", count: 0, source: 'fallback' }
+    ];
+    
+    res.status(200).json({
+      success: true,
+      data: fallbackSearches,
+      source: 'fallback'
+    });
+  } catch (error) {
+    console.error('Get popular searches error:', error);
+    res.status(200).json({
+      success: true,
+      data: [
+        { term: "Luxury", query: "luxury", icon: "🏰", count: 0 },
+        { term: "Modern", query: "modern", icon: "🎨", count: 0 },
+        { term: "Beach", query: "beach", icon: "🏖️", count: 0 },
+        { term: "Investment", query: "investment", icon: "💰", count: 0 }
+      ],
+      source: 'error-fallback'
     });
   }
 };

@@ -6,8 +6,9 @@ const {
   updatePost,
   deletePost,
   getMyPosts,
-  searchPosts,        // Add this
-  getSearchSuggestions // Add this
+  searchPosts,
+  getSearchSuggestions,
+  getPopularSearches  // Add this
 } = require('../controllers/postController');
 const { protect } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
@@ -16,8 +17,9 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getPosts);
-router.get('/search', searchPosts);           // Add search route
-router.get('/suggestions', getSearchSuggestions); // Add suggestions route
+router.get('/search', searchPosts);
+router.get('/suggestions', getSearchSuggestions);
+router.get('/popular-searches', getPopularSearches);  // Add this route
 router.get('/:id', getSinglePost);
 
 // Protected routes
