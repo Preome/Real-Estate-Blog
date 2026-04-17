@@ -4,7 +4,8 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { BallTriangle } from 'react-loader-spinner'
-import Image from 'next/image'
+// Remove the Image import since we're using regular img tags
+// import Image from 'next/image'
 import Navbar from '../components/Navbar'
 import CategoriesSidebar from '../components/CategoriesSidebar'
 
@@ -192,12 +193,15 @@ export default function HomePage() {
                 >
                   {post.imageUrl && (
                     <div className="post-image">
-                      <Image
+                      {/* Replace Next.js Image with regular img tag */}
+                      <img
                         src={post.imageUrl}
                         alt={post.title}
-                        width={400}
-                        height={250}
-                        style={{ objectFit: 'cover' }}
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover' 
+                        }}
                         loading={index < 3 ? "eager" : "lazy"}
                       />
                       {post.category && (

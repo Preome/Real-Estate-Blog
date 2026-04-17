@@ -10,11 +10,12 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+    // Add these for better image handling
+    unoptimized: false,
+    domains: ['res.cloudinary.com'],
   },
-  // Environment variables - these will be set on Render
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-  },
+  // Ensure trailing slashes don't break images
+  trailingSlash: false,
 }
 
 module.exports = nextConfig

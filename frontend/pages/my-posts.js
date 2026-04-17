@@ -5,7 +5,8 @@ import { NextSeo } from 'next-seo'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { BallTriangle } from 'react-loader-spinner'
-import Image from 'next/image'
+// Remove Next.js Image import
+// import Image from 'next/image'
 import Navbar from '../components/Navbar'
 
 export default function MyPostsPage() {
@@ -134,12 +135,15 @@ export default function MyPostsPage() {
                       <article className="post-card">
                         {post.imageUrl && (
                           <div className="post-image">
-                            <Image
+                            {/* Replace Next.js Image with regular img tag */}
+                            <img
                               src={post.imageUrl}
                               alt={post.title}
-                              width={400}
-                              height={250}
-                              style={{ objectFit: 'cover' }}
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover' 
+                              }}
                             />
                           </div>
                         )}
@@ -166,10 +170,10 @@ export default function MyPostsPage() {
                     </Link>
                     <div className="post-actions-buttons">
                       <Link href={`/edit-post/${post._id}`} className="edit-btn">
-                         Edit
+                        ✏️ Edit
                       </Link>
                       <button onClick={() => handleDelete(post._id)} className="delete-btn-small">
-                         Delete
+                        🗑️ Delete
                       </button>
                     </div>
                   </div>

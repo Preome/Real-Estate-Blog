@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Image from 'next/image'
 import Head from 'next/head'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -305,12 +304,15 @@ export default function SearchPage({
                   <article className="post-card">
                     {post.imageUrl && (
                       <div className="post-image">
-                        <Image
+                        {/* Using regular img tag instead of Next.js Image */}
+                        <img
                           src={post.imageUrl}
                           alt={post.title}
-                          width={400}
-                          height={250}
-                          style={{ objectFit: 'cover' }}
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'cover' 
+                          }}
                         />
                       </div>
                     )}

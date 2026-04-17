@@ -104,9 +104,9 @@ export default function SinglePostPage() {
 
         <main className="main">
           <article className="single-post">
-            <Link href="/" className="back-link">← Back to Home </Link>
+            <Link href="/" className="back-link">← Back to Home</Link>
             
-            {/* Full Image Display - Improved Version */}
+            {/* Full Image Display - Using regular img tag */}
             {post.imageUrl && (
               <div className="post-hero-image">
                 <div className="full-image-container">
@@ -119,7 +119,13 @@ export default function SinglePostPage() {
                     src={post.imageUrl} 
                     alt={post.title}
                     className="full-post-image"
-                    style={{ display: imageLoaded ? 'block' : 'none' }}
+                    style={{ 
+                      width: '100%', 
+                      height: 'auto', 
+                      maxHeight: '500px', 
+                      objectFit: 'contain',
+                      display: imageLoaded ? 'block' : 'none'
+                    }}
                     onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
                       console.error('Image failed to load');
