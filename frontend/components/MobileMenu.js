@@ -54,7 +54,7 @@ export default function MobileMenu({ user, onLogout }) {
           }}
           onClick={() => setIsOpen(false)}
         >
-          {/* Menu Board - Positioned to fit all options */}
+          {/* Menu Board */}
           <div
             style={{
               position: 'fixed',
@@ -106,7 +106,7 @@ export default function MobileMenu({ user, onLogout }) {
               </button>
             </div>
 
-            {/* Navigation Links - All visible without scroll */}
+            {/* Navigation Links */}
             <nav style={{ 
               padding: '8px 0',
               backgroundColor: '#ffffff',

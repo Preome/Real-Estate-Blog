@@ -27,7 +27,7 @@ export default function Navbar() {
     <header className="header glass">
       <h1>🏰 Luxury Estates</h1>
       
-      {/* Desktop Navigation - Hidden on mobile */}
+      {/* Desktop Navigation */}
       <div className="desktop-nav">
         <nav className="nav">
           <Link href="/">Home</Link>

@@ -5,7 +5,9 @@ const {
   getSinglePost,
   updatePost,
   deletePost,
-  getMyPosts
+  getMyPosts,
+  searchPosts,        // Add this
+  getSearchSuggestions // Add this
 } = require('../controllers/postController');
 const { protect } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
@@ -14,15 +16,13 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getPosts);
-
-// IMPORTANT: Specific routes MUST come before parameterized routes
-router.get('/my-posts', protect, getMyPosts);  // This must be BEFORE /:id
-
-// Parameterized route (must be LAST)
+router.get('/search', searchPosts);           // Add search route
+router.get('/suggestions', getSearchSuggestions); // Add suggestions route
 router.get('/:id', getSinglePost);
 
-// Protected routes for single post operations
+// Protected routes
 router.post('/', protect, upload.single('image'), createPost);
+router.get('/my-posts', protect, getMyPosts);
 router.put('/:id', protect, upload.single('image'), updatePost);
 router.delete('/:id', protect, deletePost);
 

@@ -243,3 +243,104 @@ exports.getMyPosts = async (req, res) => {
     });
   }
 };
+
+// @desc    Search posts with filters
+// @route   GET /api/posts/search
+// @access  Public
+exports.searchPosts = async (req, res) => {
+  try {
+    const { 
+      q, // search query
+      page = 1, 
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+    
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    // Build search query
+    let searchQuery = {};
+    
+    if (q && q.trim() !== '') {
+      searchQuery = {
+        $or: [
+          { title: { $regex: q, $options: 'i' } },
+          { description: { $regex: q, $options: 'i' } },
+          { authorName: { $regex: q, $options: 'i' } }
+        ]
+      };
+    }
+    
+    // Get total count for pagination
+    const total = await Post.countDocuments(searchQuery);
+    
+    // Get paginated results
+    const posts = await Post.find(searchQuery)
+      .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate('author', 'name email');
+    
+    res.status(200).json({
+      success: true,
+      data: posts,
+      searchQuery: q || '',
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit)),
+        hasMore: skip + posts.length < total
+      }
+    });
+  } catch (error) {
+    console.error('Search posts error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to search posts',
+      details: error.message 
+    });
+  }
+};
+
+// @desc    Get search suggestions
+// @route   GET /api/posts/suggestions
+// @access  Public
+exports.getSearchSuggestions = async (req, res) => {
+  try {
+    const { q } = req.query;
+    
+    if (!q || q.trim() === '') {
+      return res.status(200).json({
+        success: true,
+        data: []
+      });
+    }
+    
+    // Get title suggestions
+    const titleSuggestions = await Post.find(
+      { title: { $regex: q, $options: 'i' } },
+      { title: 1, _id: 1 }
+    ).limit(5);
+    
+    // Get unique author suggestions
+    const authorSuggestions = await Post.distinct('authorName', {
+      authorName: { $regex: q, $options: 'i' }
+    }).limit(3);
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        titles: titleSuggestions,
+        authors: authorSuggestions
+      }
+    });
+  } catch (error) {
+    console.error('Get suggestions error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to get suggestions'
+    });
+  }
+};

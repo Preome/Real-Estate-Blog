@@ -1,83 +1,83 @@
 import '../styles/globals.css'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { Toaster } from 'react-hot-toast'
 import ErrorBoundary from '../components/ErrorBoundary'
 import PageLoader from '../components/PageLoader'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+
+// Global SEO component that works with router
+function GlobalSEO() {
+  const router = useRouter()
+  const { q } = router.query
+  
+  let seoTitle = 'Luxury Real Estate Blog'
+  let seoDescription = 'Discover expert insights about luxury real estate investments, property management, and home buying tips.'
+  let seoKeywords = 'real estate, luxury homes, property investment, real estate blog, property management'
+  
+  // Customize for search page
+  if (router.pathname === '/search' && q) {
+    seoTitle = `Search Results for "${q}" | Luxury Real Estate Blog`
+    seoDescription = `Found search results for "${q}". Discover real estate insights, property tips, and market trends on Luxury Real Estate Blog.`
+    seoKeywords = `${q}, real estate search, property search, luxury homes, real estate insights`
+  }
+  
+  // Customize for create post page
+  if (router.pathname === '/create') {
+    seoTitle = `Create New Post | Luxury Real Estate Blog`
+    seoDescription = `Share your real estate insights, property tips, and market analysis with our community.`
+  }
+  
+  // Customize for login page
+  if (router.pathname === '/login') {
+    seoTitle = `Login | Luxury Real Estate Blog`
+    seoDescription = `Login to your account to manage your property insights and engage with the community.`
+  }
+  
+  // Customize for register page
+  if (router.pathname === '/register') {
+    seoTitle = `Register | Luxury Real Estate Blog`
+    seoDescription = `Create a free account to share property insights and join our real estate community.`
+  }
+  
+  // Customize for my posts page
+  if (router.pathname === '/my-posts') {
+    seoTitle = `My Posts | Luxury Real Estate Blog`
+    seoDescription = `Manage your property insights and track your contributions to the community.`
+  }
+  
+  return (
+    <Head>
+      <title>{seoTitle}</title>
+      <meta name="description" content={seoDescription} />
+      <meta name="keywords" content={seoKeywords} />
+      <meta name="author" content="Luxury Real Estate Blog" />
+      <meta name="robots" content="index, follow" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={seoTitle} />
+      <meta property="og:description" content={seoDescription} />
+      <meta property="og:image" content="https://res.cloudinary.com/demo/image/upload/v1312461206/sample.jpg" />
+      <meta property="og:site_name" content="Luxury Real Estate Blog" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={seoTitle} />
+      <meta name="twitter:description" content={seoDescription} />
+      <meta name="twitter:image" content="https://res.cloudinary.com/demo/image/upload/v1312461206/sample.jpg" />
+      <link rel="canonical" href={`https://yourdomain.com${router.asPath}`} />
+    </Head>
+  )
+}
 
 export default function App({ Component, pageProps }) {
-  const router = useRouter()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    
-    // Add keyboard navigation for accessibility
-    const handleKeyDown = (e) => {
-      if (e.altKey && e.key === 'ArrowLeft') {
-        router.back()
-      }
-      if (e.altKey && e.key === 'ArrowRight') {
-        router.forward()
-      }
-    }
-    
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
-
-  if (!mounted) return null
-
   return (
     <>
+      <GlobalSEO />
       <Head>
-        {/* Viewport for responsive design */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
-        
-        {/* Theme color for mobile browsers */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
         <meta name="theme-color" content="#667eea" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Real Estate Blog" />
-        
-        {/* Favicon and touch icons */}
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        
-        {/* Preconnect to external domains for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-        
-        {/* DNS prefetch for external resources */}
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        
-        {/* Character set and language */}
-        <meta charSet="UTF-8" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="language" content="English" />
-        
-        {/* Robots and crawlers */}
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        
-        {/* Author and copyright */}
-        <meta name="author" content="Real Estate Blog Team" />
-        <meta name="copyright" content="© 2024 Real Estate Blog" />
-        
-        {/* Geo tags (optional) */}
-        <meta name="geo.region" content="US" />
-        <meta name="geo.position" content="37.7749;-122.4194" />
-        <meta name="ICBM" content="37.7749, -122.4194" />
       </Head>
       
       <ErrorBoundary>
-        {/* Page loader for route transitions */}
         <PageLoader />
-        
-        {/* Toast notifications container */}
         <Toaster 
           position="top-right"
           toastOptions={{
@@ -86,44 +86,9 @@ export default function App({ Component, pageProps }) {
               background: '#363636',
               color: '#fff',
               borderRadius: '8px',
-              padding: '12px 16px',
-              fontSize: '14px',
-              maxWidth: '90vw',
-              wordBreak: 'break-word',
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
-              },
-              style: {
-                background: '#10b981',
-                color: '#fff',
-              },
-            },
-            error: {
-              duration: 4000,
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
-              },
-              style: {
-                background: '#ef4444',
-                color: '#fff',
-              },
-            },
-            loading: {
-              duration: 2000,
-              style: {
-                background: '#667eea',
-                color: '#fff',
-              },
             },
           }}
         />
-        
-        {/* Main component */}
         <Component {...pageProps} />
       </ErrorBoundary>
     </>
