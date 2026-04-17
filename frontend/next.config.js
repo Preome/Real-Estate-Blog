@@ -11,15 +11,9 @@ const nextConfig = {
       },
     ],
   },
+  // Environment variables - these will be set on Render
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
-  },
-  // Ensure server-side API calls work
-  serverRuntimeConfig: {
-    API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
-  },
-  publicRuntimeConfig: {
-    API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
 }
 
