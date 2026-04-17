@@ -9,18 +9,7 @@
 
 A full-stack real estate blog platform where users can register, create/edit/delete property posts with images, search listings, and manage their content. Features include responsive design, authentication, image uploads to Cloudinary, real-time search, and optimized performance with skeleton loaders.
 
-## 📋 Table of Contents
 
-- [Tech Stack](#tech-stack)
-- [Key Features](#key-features)
-- [Setup Instructions](#setup-instructions)
-- [Environment Variables](#environment-variables)
-- [Development Approach](#development-approach)
-- [Challenges Faced](#challenges-faced)
-- [Performance Optimizations](#performance-optimizations)
-- [SEO Implementation](#seo-implementation)
-- [Future Improvements](#future-improvements)
-- [Support](#support)
 
 ## 🚀 Tech Stack
 
@@ -63,9 +52,14 @@ A full-stack real estate blog platform where users can register, create/edit/del
 - **Loading States** - Skeleton loaders and spinners
 - **Toast Notifications** - Real-time user feedback
 
-## 🛠️ Setup Instructions
+## 🛠️ Live Deployment & Setup Instructions
 
-### Prerequisites
+### 🔴 Live Links
+| Frontend | Backend |
+|----------|---------|
+| [https://real-estate-blog-1.onrender.com](https://real-estate-blog-1.onrender.com) | [srv-d7h6uod8nd3s73ef5tdg](srv-d7h6uod8nd3s73ef5tdg) |
+
+### Prerequisites (Local Development)
 - Node.js (v18+)
 - PostgreSQL database 
 - Cloudinary account
@@ -83,7 +77,6 @@ npm install
 cp .env.example .env  # Create from example or manually
 npm run dev  # or npm start
 ```
-
 
 ### 3. Frontend Setup
 ```bash
